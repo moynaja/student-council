@@ -134,19 +134,38 @@
 
   .card {
     flex-shrink: 0;
-    width: 320px; /* เพิ่มความกว้างจาก 280px เป็น 320px */
+    width: 320px;
     background: white;
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 8px 30px rgba(201, 79, 165, 0.12), 0 2px 8px rgba(0,0,0,0.06);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
     position: relative;
-    cursor: pointer; /* ทำให้รู้ว่าคลิกได้ */
+    cursor: pointer;
+    /* เพิ่ม Animation ลอยไปมา */
+    animation: floatCard 4s ease-in-out infinite;
+  }
+
+  /* ทำให้การ์ดแต่ละใบเริ่มลอยไม่พร้อมกันเพื่อให้ดูเป็นธรรมชาติ */
+  .card:nth-child(even) {
+    animation-delay: -2s;
+  }
+
+  @keyframes floatCard {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(1deg); }
   }
 
   .card:hover {
-    transform: translateY(-10px) scale(1.03); /* ให้เด้งขึ้นมาเล็กน้อย */
+    animation: wiggle 0.5s ease-in-out infinite; /* ดิ้นตอน Hover */
     box-shadow: 0 25px 60px rgba(201, 79, 165, 0.25), 0 8px 20px rgba(0,0,0,0.15);
+    z-index: 10;
+  }
+
+  @keyframes wiggle {
+    0%, 100% { transform: translateY(-15px) scale(1.05) rotate(0deg); }
+    25% { transform: translateY(-15px) scale(1.05) rotate(-2deg); }
+    75% { transform: translateY(-15px) scale(1.05) rotate(2deg); }
   }
 
   .card-img-wrap {
