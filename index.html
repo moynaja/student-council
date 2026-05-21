@@ -134,24 +134,72 @@
 
   .card {
     flex-shrink: 0;
-    width: 280px; /* เพิ่มความกว้างจาก 220px */
+    width: 320px; /* เพิ่มความกว้างจาก 280px เป็น 320px */
     background: white;
     border-radius: 24px;
     overflow: hidden;
     box-shadow: 0 8px 30px rgba(201, 79, 165, 0.12), 0 2px 8px rgba(0,0,0,0.06);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
+    cursor: pointer; /* ทำให้รู้ว่าคลิกได้ */
   }
 
   .card:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 20px 50px rgba(201, 79, 165, 0.22), 0 4px 16px rgba(0,0,0,0.1);
+    transform: translateY(-10px) scale(1.03); /* ให้เด้งขึ้นมาเล็กน้อย */
+    box-shadow: 0 25px 60px rgba(201, 79, 165, 0.25), 0 8px 20px rgba(0,0,0,0.15);
   }
 
   .card-img-wrap {
     position: relative;
-    height: 380px; /* เพิ่มความสูงจาก 300px */
+    height: 440px; /* เพิ่มความสูงรูปจาก 380px เป็น 440px */
     overflow: hidden;
+  }
+
+  /* --- Lightbox Modal Styles --- */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(10px);
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .modal.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .modal-content {
+    max-width: 90%;
+    max-height: 85%;
+    object-fit: contain;
+    border-radius: 12px;
+    transform: scale(0.5);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 3px solid rgba(255,255,255,0.2);
+  }
+
+  .modal.active .modal-content {
+    transform: scale(1);
+  }
+
+  .close-modal {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: white;
+    font-size: 45px;
+    cursor: pointer;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
   }
 
   /* Navigation Buttons */
@@ -624,6 +672,50 @@
     dotIndex = (dotIndex + 1) % dots.length;
     dots[dotIndex].classList.add('active');
   }, 4000);
+
+  // --- Lightbox Modal Logic ---
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImg');
+  const closeModal = document.querySelector('.close-modal');
+
+  // คลิกที่ Card เพื่อขยายรูป
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => {
+      const img = card.querySelector('img');
+      if (img) {
+        modal.classList.add('active');
+        modalImg.src = img.src;
+        document.body.style.overflow = 'hidden'; // ป้องกันการเลื่อนหน้าจอ
+      }
+    });
+  });
+
+  // ปิด Modal เมื่อคลิกปุ่มปิด หรือคลิกพื้นที่ว่าง
+  closeModal.addEventListener('click', () => {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // ปิดด้วยปุ่ม Esc
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
 </script>
+  <!-- Lightbox Modal -->
+  <div id="imageModal" class="modal">
+    <span class="close-modal">&times;</span>
+    <img class="modal-content" id="modalImg">
+  </div>
+
 </body>
 </html>
